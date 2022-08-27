@@ -2,9 +2,10 @@ const express = require("express");
 const ces = require("./main");
 const app = express();
 const port = 3000;
-
+app.use(express.static(`${__dirname}/public`));
 app.get("/", (req, res) => {
-  res.send("Hello World!");
+  // res.send("Hello World!");
+  res.sendFile("index.html", { root: __dirname });
 });
 
 app.get("/assetids", (req, res) => {
