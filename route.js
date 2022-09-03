@@ -20,6 +20,16 @@ app.get("/assetids", (req, res) => {
   });
 });
 
+app.post("/assetid/:asset", (req, res) => {
+  let asset = req.params.asset;
+  data = ces.getAssetIdStatus(asset);
+  data.then((resp) => {
+    // console.log(resp);
+    resp = JSON.stringify(resp);
+    res.send(resp);
+  });
+});
+
 app.get("/uploads", (req, res) => {
   const data = ces.uploadFiles();
   data.then((resp) => {

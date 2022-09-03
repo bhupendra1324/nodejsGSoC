@@ -55,8 +55,25 @@ $("#show").on("click", () => {
   let assetVal = $("#assetIDs").val();
   if (assetVal != "Select Assest IDs...") {
     let assetId = assetVal.split("{")[1].split("}")[0];
-    loadAssetId(assetId);
+    fetch("/assetid/" + assetId, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ assetId: assetId }),
+    })
+      .then((resp) => resp.json())
+      .then((data) => checkIfTiled(data, assetId));
   } else {
     alert("Please load assetIds or select one!!");
   }
 });
+
+const checkIfTiled = (data, assetId) => {
+  if (data.status == "COMPLETE") {
+    loadAssetId(assetId);
+  } else {
+    alert(`The titling is ${data.status}. Please try again later`);
+  }
+};

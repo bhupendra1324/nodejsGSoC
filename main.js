@@ -16,6 +16,21 @@ const getAssetIds = async function (ifcomplete = null) {
   return data;
 };
 
+const getAssetIdStatus = async function (assetId) {
+  console.log("url asset");
+  console.log(assetId);
+  console.log("https://api.cesium.com/v1/assets/" + assetId);
+  const response = await request({
+    url: "https://api.cesium.com/v1/assets/" + assetId,
+    headers: { Authorization: `Bearer ${accessToken}` },
+    json: true,
+  });
+
+  //   console.log(response);
+  const data = await response;
+  return data;
+};
+
 const uploadFiles = async (fileName) => {
   const postBody = {
     name: fileName,
@@ -119,4 +134,4 @@ async function waitUntilReady(response) {
     // setTimeout(waitUntilReady, 10000);
   }
 }
-module.exports = { getAssetIds, uploadFiles, afterUploadReq };
+module.exports = { getAssetIds, uploadFiles, afterUploadReq, getAssetIdStatus };
