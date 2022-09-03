@@ -1,23 +1,33 @@
-// Cesium.Ion.defaultAccessToken =
-//   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiZGU1NGNhYy1jN2MyLTQ2YTAtOTkzZS05OTUzOGZjNjliY2MiLCJpZCI6OTgyMzAsImlhdCI6MTY1NTcxMTEyNH0.c2_6dE0vgWs0lHZDfBtD4nLZpCXPCOII7gYdXjtIfao";
-// console.log("Hello");
-// const path = $("#path")[0].innerText;
-// window.onload = () => {
-//   $("#name").css("color", "red");
-// };
 var viewer = new Cesium.Viewer("cesiumContainer");
+const loader = document.querySelector("#loading");
+viewer.infoBox.frame.sandbox =
+  "allow-same-origin allow-top-navigation allow-pointer-lock allow-popups allow-forms allow-scripts";
+$("#load").on("click", () => {
+  loader.classList.add("display");
+  fetch("/assetIds")
+    .then((resp) => resp.json())
+    .then((data) => populateAssetIds(data));
+});
 
-$("#cesiumLoad").on("click", () => {
+const populateAssetIds = (ids) => {
+  const selectDiv = $("#assetIDs");
+  let optionIds = "";
+  ids["items"].forEach((element) => {
+    optionIds += `<option>${element["name"]} {${element["id"]}}</option>`;
+  });
+  selectDiv.append(optionIds);
+  loader.classList.remove("display");
+};
+
+const loadAssetId = (assetId) => {
   let resourceId = +$("#cesiumResource").val();
   //   let token = $("#cesiumToken").val();
   let token =
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiZGU1NGNhYy1jN2MyLTQ2YTAtOTkzZS05OTUzOGZjNjliY2MiLCJpZCI6OTgyMzAsImlhdCI6MTY1NTcxMTEyNH0.c2_6dE0vgWs0lHZDfBtD4nLZpCXPCOII7gYdXjtIfao";
   Cesium.Ion.defaultAccessToken = token;
-  // "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiZGU1NGNhYy1jN2MyLTQ2YTAtOTkzZS05OTUzOGZjNjliY2MiLCJpZCI6OTgyMzAsImlhdCI6MTY1NTcxMTEyNH0.c2_6dE0vgWs0lHZDfBtD4nLZpCXPCOII7gYdXjtIfao";
-
   const tileset = viewer.scene.primitives.add(
     new Cesium.Cesium3DTileset({
-      url: Cesium.IonResource.fromAssetId(resourceId),
+      url: Cesium.IonResource.fromAssetId(assetId),
     })
   );
 
@@ -39,4 +49,14 @@ $("#cesiumLoad").on("click", () => {
       console.log(error);
     }
   })();
+};
+
+$("#show").on("click", () => {
+  let assetVal = $("#assetIDs").val();
+  if (assetVal != "Select Assest IDs...") {
+    let assetId = assetVal.split("{")[1].split("}")[0];
+    loadAssetId(assetId);
+  } else {
+    alert("Please load assetIds or select one!!");
+  }
 });

@@ -16,9 +16,9 @@ const getAssetIds = async function (ifcomplete = null) {
   return data;
 };
 
-const uploadFiles = async () => {
+const uploadFiles = async (fileName) => {
   const postBody = {
-    name: "Reichstag",
+    name: fileName,
     description: "See [Wikipedia](https://en.wikipedia.org/?curid=217577).",
     type: "3DTILES",
     options: {
@@ -38,7 +38,7 @@ const uploadFiles = async () => {
   return data;
 };
 
-const afterUploadReq = async (response) => {
+const afterUploadReq = async (response, filename) => {
   const uploadLocation = response.uploadLocation;
   s3 = new AWS.S3({
     apiVersion: "2006-03-01",
@@ -51,13 +51,14 @@ const afterUploadReq = async (response) => {
       uploadLocation.sessionToken
     ),
   });
-  const input = "./Reichstag.zip";
-
+  const input = "./files/" + filename;
+  console.log("This is from input file directory");
+  console.log(input);
   await s3
     .upload({
       Body: fs.createReadStream(input),
       Bucket: uploadLocation.bucket,
-      Key: `${uploadLocation.prefix}Reichstag.zip`,
+      Key: `${uploadLocation.prefix} + ${filename}`,
     })
     .promise()
     .then((res) => {
